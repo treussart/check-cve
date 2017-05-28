@@ -19,10 +19,8 @@ def check_white_list(cve_name):
     return False
 
 
-def send_email(cve_new, nbr):
+def send_email(from_address, to_address, cve_new, nbr):
     msg = MIMEText("<html><head></head><body>" + str(cve_new) + "</body></html>", 'html')
-    from_address = "cve@treussart.com"
-    to_address = "matthieu@treussart.com"
     msg['Subject'] = '%s new CVE for services' % nbr
     msg['From'] = from_address
     msg['To'] = to_address
@@ -42,9 +40,17 @@ def check_cve():
     parser.add_argument("--private_key",
                         help="the private key of the SSH connection",
                         default="matthieu@treussart.com_rsa")
+    parser.add_argument("--from_address",
+                        help="The address who send the email",
+                        default="cve@treussart.com")
+    parser.add_argument("--to_address",
+                        help="The address who receive the email",
+                        default="matthieu@treussart.com")
     args = parser.parse_args()
     username = args.username
     private_key = current_path + '/../.ssh/'+ args.private_key
+    from_address = args.from_address
+    to_address = args.to_address
     list_new_cve = ""
     nbr = 0
     cv = CheckVersions()
@@ -65,7 +71,7 @@ def check_cve():
             list_new_cve += "<h2>" + cpe + "</h2><br/>" + list_new_cve_rows
     if list_new_cve:
         print("send email")
-        send_email(list_new_cve, nbr)
+        send_email(from_address, to_address, list_new_cve, nbr)
 
 
 if __name__ == "__main__":
