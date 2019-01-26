@@ -4,7 +4,7 @@ import sqlite3
 import argparse
 import smtplib
 from email.mime.text import MIMEText
-from CVESearch import CVESearch # https://github.com/cve-search/PyCVESearch
+from CVESearch import CVESearch  # https://github.com/cve-search/PyCVESearch
 from CheckVersions import CheckVersions
 import os
 
@@ -48,7 +48,7 @@ def check_cve():
                         default="matthieu@treussart.com")
     args = parser.parse_args()
     username = args.username
-    private_key = current_path + '/../.ssh/'+ args.private_key
+    private_key = current_path + '/../.ssh/' + args.private_key
     from_address = args.from_address
     to_address = args.to_address
     list_new_cve = ""
@@ -62,12 +62,12 @@ def check_cve():
         cves_json = cve.cvefor(cpe)
         for i, val in enumerate(cves_json):
             if not check_white_list(cves_json[i]['id']):
-                #print(cves_json[i]['id'])
+                # print(cves_json[i]['id'])
                 new = True
                 nbr += 1
                 list_new_cve_rows = list_new_cve_rows + "<h4>" + cves_json[i]['id'] + " :</h4>" + cves_json[i]['summary'] + "<br/>"
         if new:
-            #print(cpe)
+            # print(cpe)
             list_new_cve += "<h2>" + cpe + "</h2><br/>" + list_new_cve_rows
     if list_new_cve:
         print("send email")
