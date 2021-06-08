@@ -1,12 +1,9 @@
-#!/usr/bin/python3
-# coding: utf8
 import os
 import subprocess
 import configparser
 
 
-class CheckVersions(object):
-
+class CheckVersions:
     @staticmethod
     def convert_to_cpe(name, version):
         prefix = "cpe:/a:"
@@ -16,7 +13,9 @@ class CheckVersions(object):
 
     @staticmethod
     def ssh_connection(hostname, username, pkey_file, command):
-        return subprocess.getoutput('ssh -i ' + pkey_file + ' ' + username + '@' + hostname + " '" + command + "'")
+        return subprocess.getoutput(
+            f"ssh -i {pkey_file} {username}@{hostname} '{command}'"
+        )
 
     def check_versions(self, username, private_key):
         config_name = "conf.ini"
@@ -24,11 +23,13 @@ class CheckVersions(object):
         config = configparser.ConfigParser()
         config.read(config_file)
         cpe_list = []
-        for key, value in config.__dict__['_sections'].items():
-            command = value['command']
-            if value['ssh'] == "True":
-                version = self.ssh_connection(value['hostname'], username, private_key, command)
+        for key, value in config.__dict__["_sections"].items():
+            command = value["command"]
+            if value["ssh"] == "True":
+                version = self.ssh_connection(
+                    value["hostname"], username, private_key, command
+                )
             else:
                 version = subprocess.getoutput(command)
-            cpe_list.append(self.convert_to_cpe(value['cpe'], version))
+            cpe_list.append(self.convert_to_cpe(value["cpe"], version))
         return cpe_list
